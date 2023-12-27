@@ -45,10 +45,10 @@ void setup() {
   Wire.begin();
 
   /* Sensor Check */
-//  if (!bno.begin()) {
-//    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-//    while (1);
-//  }
+  if (!bno.begin()) {
+    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+    while (1);
+  }
 
   while (!ms5837.init()) {
     Serial.println("Init failed!");
