@@ -4,8 +4,7 @@
 #include <robotic_sas_auv_ros/Actuator.h>
 
 /* Declare Thruster Pin */
-byte pin_thruster[8] = {3, 5, 7, 9, 12, 10, 8, 6};
-Servo thruster[8];
+byte pin_thruster[8] = {3, 5, 7, 9, 12, 10, 8, 6};Servo thruster[8];
 
 /* Define ROS Node */
 ros::NodeHandle node_arduino;
@@ -17,7 +16,7 @@ std_msgs::Bool msg_is_start;
 ros::Publisher pub_is_start("is_start", &msg_is_start);
 
 /* ROS Subs Callback */
-void cb_pwm_thruster(const robotic_sas_auv_ros::Actuator& pwm) {
+void cb_pwm_actuator(const robotic_sas_auv_ros::Actuator& pwm) {
   thruster[0].writeMicroseconds(pwm.thruster_1);
   thruster[1].writeMicroseconds(pwm.thruster_2);
   thruster[2].writeMicroseconds(pwm.thruster_3);
@@ -29,7 +28,7 @@ void cb_pwm_thruster(const robotic_sas_auv_ros::Actuator& pwm) {
 }
 
 /* Define Ros Subs */
-ros::Subscriber<robotic_sas_auv_ros::Actuator> sub_pwm_thruster("/nuc/pwm_actuator", &cb_pwm_thruster);
+ros::Subscriber<robotic_sas_auv_ros::Actuator> sub_pwm_actuator("/nuc/pwm_actuator", &cb_pwm_actuator);
 
 void setup() {
   /* Redefine Thruster & Pin */
@@ -41,11 +40,11 @@ void setup() {
   /* Init Node */
   node_arduino.initNode();
   
-  /* Subscribe Subs */
+  /* Advertise Pubs */
   node_arduino.advertise(pub_is_start);  
 
   /* Subscribe Subs */
-  node_arduino.subscribe(sub_pwm_thruster);
+  node_arduino.subscribe(sub_pwm_actuator);
 
   msg_is_start.data = false;
   pub_is_start.publish(&msg_is_start);
