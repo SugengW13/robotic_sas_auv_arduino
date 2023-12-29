@@ -4,6 +4,7 @@
 #include <Servo.h>
 #include <Adafruit_BNO055.h>
 #include <MS5837.h>
+#include <std_msgs/Bool.h>
 #include <robotic_sas_auv_ros/Sensor.h>
 #include <robotic_sas_auv_ros/Actuator.h>
 
@@ -19,9 +20,11 @@ Servo thruster[8];
 ros::NodeHandle node_arduino;
 
 /* Define ROS Msgs */
+std_msgs::Bool msg_is_start;
 robotic_sas_auv_ros::Sensor msg_sensor;
 
 /* Define ROS Pubs */
+ros::Publisher pub_is_start("is_start", &msg_is_start);
 ros::Publisher pub_sensor("sensor", &msg_sensor);
 
 /* ROS Subs Callback */
@@ -37,7 +40,7 @@ void cb_pwm_thruster(const robotic_sas_auv_ros::Actuator& pwm) {
 }
 
 /* Define Ros Subs */
-ros::Subscriber<robotic_sas_auv_ros::Actuator> sub_pwm_thruster("/nuc/pwm_thruster", &cb_pwm_thruster);
+ros::Subscriber<robotic_sas_auv_ros::Actuator> sub_pwm_thruster("/nuc/pwm_actuator", &cb_pwm_thruster);
 
 void setup() {
   Serial.begin(57600);
@@ -72,6 +75,7 @@ void setup() {
   node_arduino.initNode();
 
   /* Advertise Pubs */
+  node_arduino.advertise(pub_is_start);
   node_arduino.advertise(pub_sensor);
 
   /* Subscribe Subs */
@@ -95,6 +99,7 @@ void loop() {
   float altitude = ms5837.altitude();
 
   /* Store Sensor Value to ROS Msgs */
+  msg_is_start.data = true;
   msg_sensor.roll = roll;
   msg_sensor.pitch = pitch;
   msg_sensor.yaw = yaw;
@@ -104,6 +109,7 @@ void loop() {
   msg_sensor.altitude = altitude;
 
   /* Publish ROS Msgs */
+  pub_is_start.publish(&msg_is_start);
   pub_sensor.publish(&msg_sensor);
 
   /* Spin ROS Node */

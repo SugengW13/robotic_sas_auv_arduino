@@ -4,8 +4,7 @@
 #include <robotic_sas_auv_ros/Actuator.h>
 
 /* Declare Thruster Pin */
-byte pin_thruster[8] = {3, 5, 7, 9, 12, 10, 8, 6};
-Servo thruster[8];
+byte pin_thruster[8] = {3, 5, 7, 9, 12, 10, 8, 6};Servo thruster[8];
 
 /* Define ROS Node */
 ros::NodeHandle node_arduino;
