@@ -37,7 +37,7 @@ void cb_pwm_thruster(const robotic_sas_auv_ros::Actuator& pwm) {
 }
 
 /* Define Ros Subs */
-ros::Subscriber<robotic_sas_auv_ros::Actuator> sub_pwm_thruster("/nuc/pwm_thruster", &cb_pwm_thruster);
+ros::Subscriber<robotic_sas_auv_ros::Actuator> sub_pwm_thruster("/nuc/pwm_actuator", &cb_pwm_thruster);
 
 void setup() {
   Serial.begin(57600);
