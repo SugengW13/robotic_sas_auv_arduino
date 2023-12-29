@@ -28,7 +28,7 @@ ros::Publisher pub_is_start("is_start", &msg_is_start);
 ros::Publisher pub_sensor("sensor", &msg_sensor);
 
 /* ROS Subs Callback */
-void cb_pwm_thruster(const robotic_sas_auv_ros::Actuator& pwm) {
+void cb_pwm_actuator(const robotic_sas_auv_ros::Actuator& pwm) {
   thruster[0].writeMicroseconds(pwm.thruster_1);
   thruster[1].writeMicroseconds(pwm.thruster_2);
   thruster[2].writeMicroseconds(pwm.thruster_3);
@@ -40,7 +40,7 @@ void cb_pwm_thruster(const robotic_sas_auv_ros::Actuator& pwm) {
 }
 
 /* Define Ros Subs */
-ros::Subscriber<robotic_sas_auv_ros::Actuator> sub_pwm_thruster("/nuc/pwm_actuator", &cb_pwm_thruster);
+ros::Subscriber<robotic_sas_auv_ros::Actuator> sub_pwm_actuator("/nuc/pwm_actuator", &cb_pwm_actuator);
 
 void setup() {
   Serial.begin(57600);
@@ -79,7 +79,7 @@ void setup() {
   node_arduino.advertise(pub_sensor);
 
   /* Subscribe Subs */
-  node_arduino.subscribe(sub_pwm_thruster);
+  node_arduino.subscribe(sub_pwm_actuator);
 }
 
 void loop() {
