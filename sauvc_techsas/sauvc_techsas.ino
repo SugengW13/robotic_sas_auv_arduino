@@ -2,14 +2,12 @@
 #include <ros.h>
 #include <Wire.h>
 #include <Servo.h>
-#include <Adafruit_BNO055.h>
 #include <MS5837.h>
 #include <std_msgs/Bool.h>
-#include <robotic_sas_auv_ros/Sensor.h>
+#include <robotic_sas_auv_ros/ArduinoSensor.h>
 #include <robotic_sas_auv_ros/Actuator.h>
 
 /* Declare Sensor */
-Adafruit_BNO055 bno = Adafruit_BNO055();
 MS5837 ms5837;
 
 /* Declare Thruster Pin */
@@ -21,7 +19,7 @@ ros::NodeHandle node_arduino;
 
 /* Define ROS Msgs */
 std_msgs::Bool msg_is_start;
-robotic_sas_auv_ros::Sensor msg_sensor;
+robotic_sas_auv_ros::ArduinoSensor msg_sensor;
 
 /* Define ROS Pubs */
 ros::Publisher pub_is_start("is_start", &msg_is_start);
@@ -47,12 +45,9 @@ void setup() {
 
   Wire.begin();
 
-  /* Sensor Check */
-  if (!bno.begin()) {
-    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-    while (1);
-  }
+  Serial.println(ms5837.init());
 
+  /* Sensor Check */
   while (!ms5837.init()) {
     Serial.println("Init failed!");
     Serial.println("Are SDA/SCL connected correctly?");
@@ -84,15 +79,9 @@ void setup() {
 
 void loop() {
   /* Read Sensor Value */
-  sensors_event_t event;
-  bno.getEvent(&event);
   ms5837.read();
-
+  
   /* Store Sensor Value to Variable */
-  float roll = event.orientation.x;
-  float pitch = event.orientation.y;
-  float yaw = event.orientation.z;
-
   float pressure = ms5837.pressure();
   float temperature = ms5837.temperature();
   float depth = ms5837.depth();
@@ -100,9 +89,6 @@ void loop() {
 
   /* Store Sensor Value to ROS Msgs */
   msg_is_start.data = true;
-  msg_sensor.roll = roll;
-  msg_sensor.pitch = pitch;
-  msg_sensor.yaw = yaw;
   msg_sensor.pressure = pressure;
   msg_sensor.temperature = temperature;
   msg_sensor.depth = depth;
