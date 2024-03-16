@@ -7,6 +7,8 @@
 #include <robotic_sas_auv_ros/ArduinoSensor.h>
 #include <robotic_sas_auv_ros/Actuator.h>
 
+int rate = 100;
+
 /* Declare Sensor */
 MS5837 ms5837;
 
@@ -101,5 +103,5 @@ void loop() {
   /* Spin ROS Node */
   node_arduino.spinOnce();
 
-  delay(100);
+  delay((1 / rate) * 1000);
 }
